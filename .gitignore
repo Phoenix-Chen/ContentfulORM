@@ -1,0 +1,22 @@
+#----------------------------------------------------------------------------
+# Ignore these files when commiting to a git repository.
+#
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+#
+#----------------------------------------------------------------------------
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# MacOs
+.DS_Store
+
+# Test files
+test.py
+
+# Virtual environment
+/venv
+
+# Test requirements
+requirements.txt
