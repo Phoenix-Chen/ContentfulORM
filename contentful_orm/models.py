@@ -1,10 +1,17 @@
 import inspect
 from .fields import Field
+from functools import wraps
 
 class Model:
-    def to_schema(self):
+    __id__ = None
+
+    def serialize(self):
         attributes = dict()
         attributes['name'] = self.__class__.__name__
+        attributes['description'] =  ''
+        docstring = self.__class__.__doc__
+        if docstring != None:
+            attributes['description'] =  ' '.join(docstring.split())
         attributes['fields'] = list()
         for attr in dir(self):
             obj = getattr(self, attr)
@@ -15,6 +22,3 @@ class Model:
                 obj.set_name(attr)
                 attributes['fields'].append(obj.serialize())
         return attributes
-
-    def generate_id(self):
-        pass

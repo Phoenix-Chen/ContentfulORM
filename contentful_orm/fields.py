@@ -1,7 +1,19 @@
 import re
+import inspect
+
+class Validation:
+    def __init__(self, unique: bool = None):
+        self.validations = list()
+
+        if unique != None:
+            self.validations.append({'unique' : True})
+
+    def __repr__(self):
+        return repr(self.validations)
+
 
 class Field:
-    def __init__(self, disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = []):
+    def __init__(self, disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: Validation = []):
         self.name = None
         self.id = None
         self.disabled = disabled
@@ -59,3 +71,13 @@ class SymbolField(Field):
 
 class TextField(Field):
     type = 'Text'
+
+class BooleanField(Field):
+    type = 'Boolean'
+
+class MediaField(Field):
+    type = 'Link'
+    linkType = 'Asset'
+
+class IntegerField(Field):
+    type = 'Integer'
