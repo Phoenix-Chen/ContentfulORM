@@ -1,0 +1,1 @@
+from .contentful_connector import ContentfulManagementConnector

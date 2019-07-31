@@ -1,27 +1,43 @@
 import re
 import inspect
+from json import JSONEncoder
 
-class Validation:
-    def __init__(self, unique: bool = None):
-        self.validations = list()
+# class Validation:
+#     def __init__(self, unique: bool = None):
+#         self.validations = list()
+#         # for arg in inspect.getfullargspec(self.__init__).args:
+#         # print(inspect.getfullargspec(self.__init__))
+#         if unique != None:
+#             self.validations.append({'unique' : True})
+#
+#     # def valid_args(self):
+#     #     """Validate the arguments passed are valid
+#     #     """
+#     #     pass
+#
+#     def __repr__(self):
+#         return repr(self.validations)
+#
+# class ValidationEncoder(JSONEncoder):
+#     def default(self, obj):
+#         return obj.validations
 
-        if unique != None:
-            self.validations.append({'unique' : True})
-
-    def __repr__(self):
-        return repr(self.validations)
-
+def Validation(unique: bool = None):
+    validations = list()
+    if unique != None:
+        validations.append({'unique' : True})
+    return validations
 
 class Field:
-    def __init__(self, disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: Validation = []):
+    def __init__(self, disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = []):
         self.name = None
         self.id = None
         self.disabled = disabled
         self.localized = localized
         self.omitted = omitted
         self.required = required
+        # self.validations = ValidationEncoder().encode(validations) if validations != None else []
         self.validations = validations
-
 
     def set_name(self, name: str):
         """Set the name and the id of the field.
