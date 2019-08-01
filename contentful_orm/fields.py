@@ -1,6 +1,7 @@
 import re
 import inspect
 from json import JSONEncoder
+from . import models
 
 # class Validation:
 #     def __init__(self, unique: bool = None):
@@ -97,3 +98,35 @@ class MediaField(Field):
 
 class IntegerField(Field):
     type = 'Integer'
+
+def is_base_cls_type(cls, target_base):
+    """Check if target_base is cls's base class (besides object class)
+    """
+    # Check cls and target_base are classes instead of instance
+    if type(cls) != type:
+        raise TypeError('cls has to be a class, not ' + str(type(cls)) + '.')
+    if type(target_base) != type:
+        raise TypeError('target_base has to be a class, not ' + str(type(cls)) + '.')
+
+    if inspect.getmro(cls)[-2] == target_base:
+        return True
+    return False
+
+class ReferenceField(Field):
+    type = 'Link'
+    linkType = 'Entry'
+    
+    def __init__(self, model_set, error_msg: str = '', disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = []):
+        link_content_type = dict()
+        link_content_type['linkContentType'] = list()
+        # Check if model_set contains only Model based class
+        for model in model_set:
+            if not is_base_cls_type(model, models.Model):
+                raise TypeError('model_set can only contain models.Model based class. Detected: ' + str(model) + '.')
+            link_content_type['linkContentType'].append(model.__id__)
+
+        if error_msg != '' or None:
+            link_content_type['message'] = error_msg
+        validations.append(link_content_type)
+
+        super().__init__(disabled=disabled, localized=localized, omitted=omitted, required=required, validations=validations)
