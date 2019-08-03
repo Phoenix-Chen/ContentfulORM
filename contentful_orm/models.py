@@ -16,16 +16,17 @@ class Model:
     #         return _wrapper
     #
     # @Decorators.has_id()
-    def serialize(self):
+    @classmethod
+    def serialize(cls):
         attributes = dict()
-        attributes['name'] = self.__class__.__name__
+        attributes['name'] = cls.__name__
         attributes['description'] =  ''
-        docstring = self.__class__.__doc__
+        docstring = cls.__doc__
         if docstring != None:
             attributes['description'] =  ' '.join(docstring.split())
         attributes['fields'] = list()
-        for attr in dir(self):
-            obj = getattr(self, attr)
+        for attr in dir(cls):
+            obj = getattr(cls, attr)
             if not callable(obj) and not attr.startswith("__"):
                 # Check if all attributes has Field based class
                 if inspect.getmro(type(obj))[-2] != Field:
@@ -34,5 +35,6 @@ class Model:
                 attributes['fields'].append(obj.serialize())
         return attributes
 
-    def create(self, connector):
-        return connector.content_types().create(self.__id__, self.serialize())
+    @classmethod
+    def create(cls, connector):
+        return connector.content_types().create(cls.__id__, cls.serialize())

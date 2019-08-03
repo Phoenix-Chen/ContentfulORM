@@ -99,6 +99,9 @@ class MediaField(Field):
 class IntegerField(Field):
     type = 'Integer'
 
+class DecimalField(Field):
+    type = 'Number'
+
 def is_base_cls_type(cls, target_base):
     """Check if target_base is cls's base class (besides object class)
     """
@@ -115,7 +118,7 @@ def is_base_cls_type(cls, target_base):
 class ReferenceField(Field):
     type = 'Link'
     linkType = 'Entry'
-    
+
     def __init__(self, model_set, error_msg: str = '', disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = []):
         link_content_type = dict()
         link_content_type['linkContentType'] = list()
