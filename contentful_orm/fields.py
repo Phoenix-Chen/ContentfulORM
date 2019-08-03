@@ -24,13 +24,16 @@ from . import models
 #         return obj.validations
 
 def Validation(unique: bool = None):
+    allowed_param = {
+        'Symbol' : ['size']
+    }
     validations = list()
     if unique != None:
         validations.append({'unique' : True})
     return validations
 
 class Field:
-    def __init__(self, disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = []):
+    def __init__(self, disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = None):
         self.name = None
         self.id = None
         self.disabled = disabled
@@ -38,7 +41,8 @@ class Field:
         self.omitted = omitted
         self.required = required
         # self.validations = ValidationEncoder().encode(validations) if validations != None else []
-        self.validations = validations
+        # Damn you first-class object
+        self.validations = validations if validations != None else list()
 
     def set_name(self, name: str):
         """Set the name and the id of the field.
@@ -66,12 +70,9 @@ class Field:
         if not name[0].isalpha():
             raise ValueError('Field name can only start with alphabet.')
 
-        id = ''
-
         # Split by space and underscore
         name.replace(' ', '_')
-        for i in name.split('_'):
-            id += i.capitalize()
+        id = ''.join([i.capitalize() for i in name.split('_')])
         return id[0].lower() + id[1:]
 
 
@@ -119,7 +120,10 @@ class ReferenceField(Field):
     type = 'Link'
     linkType = 'Entry'
 
-    def __init__(self, model_set, error_msg: str = '', disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = []):
+    def __init__(self, model_set: set = {}, error_msg: str = '', disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = None):
+        # Damn you first-class object
+        if validations == None:
+            validations = list()
         link_content_type = dict()
         link_content_type['linkContentType'] = list()
         # Check if model_set contains only Model based class
@@ -130,6 +134,9 @@ class ReferenceField(Field):
 
         if error_msg != '' or None:
             link_content_type['message'] = error_msg
-        validations.append(link_content_type)
+
+        # only add linkContentType if specified any entry type
+        if len(link_content_type['linkContentType']) > 0:
+            validations.append(link_content_type)
 
         super().__init__(disabled=disabled, localized=localized, omitted=omitted, required=required, validations=validations)
