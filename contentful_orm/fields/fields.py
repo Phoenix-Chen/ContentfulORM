@@ -2,7 +2,7 @@ import re
 import inspect
 from json import JSONEncoder
 from .. import models
-from .validation import LinkContentType
+from .validations import LinkContentType
 
 # class Validation:
 #     def __init__(self, unique: bool = None):

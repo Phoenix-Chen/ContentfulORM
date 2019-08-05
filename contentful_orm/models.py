@@ -1,6 +1,8 @@
 import inspect
 from .fields import fields
 from functools import wraps
+from contentful_management.errors import NotFoundError
+from .errors import OperationalError
 
 class Model:
     __id__ = None
@@ -37,4 +39,14 @@ class Model:
 
     @classmethod
     def create(cls, connector):
+        if cls.exist(connector):
+            raise OperationalError('Content type ' + str(cls.__id__) + ' already exist. Use update() to update fields.')
         return connector.content_types().create(cls.__id__, cls.serialize())
+
+    @classmethod
+    def exist(cls, connector):
+        try:
+            connector.content_types().find(cls.__id__)
+        except NotFoundError as nfe:
+            return False
+        return True
