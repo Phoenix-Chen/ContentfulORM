@@ -1,5 +1,5 @@
 import inspect
-from .fields import Field
+from .fields import fields
 from functools import wraps
 
 class Model:
@@ -29,7 +29,7 @@ class Model:
             obj = getattr(cls, attr)
             if not callable(obj) and not attr.startswith("__"):
                 # Check if all attributes has Field based class
-                if inspect.getmro(type(obj))[-2] != Field:
+                if inspect.getmro(type(obj))[-2] != fields.Field:
                     raise TypeError('Model fields must be a Field based class. Field (' + attr + ') is ' + str(type(obj)) + '.')
                 obj.set_name(attr)
                 attributes['fields'].append(obj.serialize())

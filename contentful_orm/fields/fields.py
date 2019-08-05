@@ -1,7 +1,8 @@
 import re
 import inspect
 from json import JSONEncoder
-from . import models
+from .. import models
+from .validation import LinkContentType
 
 # class Validation:
 #     def __init__(self, unique: bool = None):
@@ -23,14 +24,14 @@ from . import models
 #     def default(self, obj):
 #         return obj.validations
 
-def Validation(unique: bool = None):
-    allowed_param = {
-        'Symbol' : ['size']
-    }
-    validations = list()
-    if unique != None:
-        validations.append({'unique' : True})
-    return validations
+# def Validation(unique: bool = None):
+#     allowed_param = {
+#         'Symbol' : ['size']
+#     }
+#     validations = list()
+#     if unique != None:
+#         validations.append({'unique' : True})
+#     return validations
 
 class Field:
     def __init__(self, disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = None):
@@ -42,7 +43,7 @@ class Field:
         self.required = required
         # self.validations = ValidationEncoder().encode(validations) if validations != None else []
         # Damn you first-class object
-        self.validations = validations if validations != None else list()
+        self.validations = [v.serialize() for v in validations] if validations != None else list()
 
     def set_name(self, name: str):
         """Set the name and the id of the field.
@@ -51,7 +52,7 @@ class Field:
         self.id = self._generate_id(name)
 
 
-    def _generate_id(self, name: str) ->  str:
+    def _generate_id(self, name: str) -> str:
         """Generate field id based on field name.
 
             Args:
@@ -103,6 +104,7 @@ class IntegerField(Field):
 class DecimalField(Field):
     type = 'Number'
 
+# NOTE: Might change to use cls.__bases__ to verify base class
 def is_base_cls_type(cls, target_base):
     """Check if target_base is cls's base class (besides object class)
     """
@@ -124,19 +126,16 @@ class ReferenceField(Field):
         # Damn you first-class object
         if validations == None:
             validations = list()
-        link_content_type = dict()
-        link_content_type['linkContentType'] = list()
-        # Check if model_set contains only Model based class
-        for model in model_set:
-            if not is_base_cls_type(model, models.Model):
-                raise TypeError('model_set can only contain models.Model based class. Detected: ' + str(model) + '.')
-            link_content_type['linkContentType'].append(model.__id__)
 
-        if error_msg != '' or None:
-            link_content_type['message'] = error_msg
+        if len(model_set) > 0:
+            link_content_types = list()
+            # Check if model_set contains only Model based class
+            for model in model_set:
+                if not is_base_cls_type(model, models.Model):
+                    raise TypeError('model_set can only contain models.Model based class. Detected: ' + str(model) + '.')
+                link_content_types.append(model.__id__)
 
-        # only add linkContentType if specified any entry type
-        if len(link_content_type['linkContentType']) > 0:
-            validations.append(link_content_type)
+
+            validations.append(LinkContentType(link_content_types, error_msg=error_msg))
 
         super().__init__(disabled=disabled, localized=localized, omitted=omitted, required=required, validations=validations)
