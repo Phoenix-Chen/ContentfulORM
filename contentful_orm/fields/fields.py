@@ -1,37 +1,9 @@
-import re
 import inspect
 from json import JSONEncoder
 from .. import models
 from .validations import LinkContentType
+from ..utils import generate_id
 
-# class Validation:
-#     def __init__(self, unique: bool = None):
-#         self.validations = list()
-#         # for arg in inspect.getfullargspec(self.__init__).args:
-#         # print(inspect.getfullargspec(self.__init__))
-#         if unique != None:
-#             self.validations.append({'unique' : True})
-#
-#     # def valid_args(self):
-#     #     """Validate the arguments passed are valid
-#     #     """
-#     #     pass
-#
-#     def __repr__(self):
-#         return repr(self.validations)
-#
-# class ValidationEncoder(JSONEncoder):
-#     def default(self, obj):
-#         return obj.validations
-
-# def Validation(unique: bool = None):
-#     allowed_param = {
-#         'Symbol' : ['size']
-#     }
-#     validations = list()
-#     if unique != None:
-#         validations.append({'unique' : True})
-#     return validations
 
 class Field:
     def __init__(self, disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = None):
@@ -41,7 +13,6 @@ class Field:
         self.localized = localized
         self.omitted = omitted
         self.required = required
-        # self.validations = ValidationEncoder().encode(validations) if validations != None else []
         # Damn you first-class object
         self.validations = [v.serialize() for v in validations] if validations != None else list()
 
@@ -49,33 +20,7 @@ class Field:
         """Set the name and the id of the field.
         """
         self.name = name
-        self.id = self._generate_id(name)
-
-
-    def _generate_id(self, name: str) -> str:
-        """Generate field id based on field name.
-
-            Args:
-                name (str): Field name.
-
-            Returns:
-                str : Generated field id.
-
-        """
-        if name == '' or name == None:
-            raise ValueError('Field name cannot be empty or None.')
-
-        if not re.match('^[a-zA-Z0-9_ ]+$', name):
-            raise ValueError('Field name can only contain alphabets, numbers, space and underscore.')
-
-        if not name[0].isalpha():
-            raise ValueError('Field name can only start with alphabet.')
-
-        # Split by space and underscore
-        name.replace(' ', '_')
-        id = ''.join([i.capitalize() for i in name.split('_')])
-        return id[0].lower() + id[1:]
-
+        self.id = generate_id(name)
 
     def serialize(self):
         field = {}
@@ -133,7 +78,7 @@ class ReferenceField(Field):
             for model in model_set:
                 if not is_base_cls_type(model, models.Model):
                     raise TypeError('model_set can only contain models.Model based class. Detected: ' + str(model) + '.')
-                link_content_types.append(model.__id__)
+                link_content_types.append(generate_id(model.__name__))
 
 
             validations.append(LinkContentType(link_content_types, error_msg=error_msg))
