@@ -33,7 +33,7 @@ class ContentfulManagementConnector:
         return obj.unpublish(self.environment)
 
     def query(self, model):
-        pass
+        return model.query(self.environment)
 
     def add(self, obj):
         pass

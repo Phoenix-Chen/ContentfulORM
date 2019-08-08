@@ -23,3 +23,16 @@ def generate_id(name: str) -> str:
     name.replace(' ', '_')
     id = ''.join([i.capitalize() for i in name.split('_')])
     return id[0].lower() + id[1:]
+
+
+def _get_class_attr(cls) -> list:
+    """Get all non-callable class attributes.
+
+        Args:
+            cls (type) : class.
+
+        Returns:
+            list : all non-callable class attributes.
+
+    """
+    return [attr for attr in dir(cls) if not callable(getattr(cls, attr)) and not attr.startswith("__")]
