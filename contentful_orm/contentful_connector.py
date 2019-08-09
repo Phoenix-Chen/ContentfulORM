@@ -35,7 +35,7 @@ class ContentfulManagementConnector:
     def query(self, model):
         return model.query(self.environment)
 
-    def add(self, obj):
+    def add(self, obj, entry_id=None):
         pass
 
     # def upload_image(self, image, publish=True):

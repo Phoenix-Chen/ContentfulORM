@@ -1,4 +1,5 @@
 import re
+import inspect
 
 def generate_id(name: str) -> str:
     """Generate id in camelCase based on input.
@@ -36,3 +37,17 @@ def _get_class_attr(cls) -> list:
 
     """
     return [attr for attr in dir(cls) if not callable(getattr(cls, attr)) and not attr.startswith("__")]
+
+# NOTE: Might change to use cls.__bases__ to verify base class
+def _is_base_cls_type(cls, target_base):
+    """Check if target_base is cls's base class (besides object class)
+    """
+    # Check cls and target_base are classes instead of instance
+    if type(cls) != type:
+        raise TypeError('cls has to be a class, not ' + str(type(cls)) + '.')
+    if type(target_base) != type:
+        raise TypeError('target_base has to be a class, not ' + str(type(cls)) + '.')
+
+    if inspect.getmro(cls)[-2] == target_base:
+        return True
+    return False
