@@ -1,0 +1,4 @@
+
+
+class OperationalError(Exception):
+    pass

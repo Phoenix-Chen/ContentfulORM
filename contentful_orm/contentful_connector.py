@@ -23,6 +23,21 @@ class ContentfulManagementConnector:
     def create(self, obj):
         return obj.create(self.environment)
 
+    def delete(self, obj):
+        return obj.delete(self.environment)
+
+    def publish(self, obj):
+        return obj.publish(self.environment)
+
+    def unpublish(self, obj):
+        return obj.unpublish(self.environment)
+
+    def query(self, model):
+        return model.query(self.environment)
+
+    def add(self, obj, entry_id=None):
+        pass
+
     # def upload_image(self, image, publish=True):
     #     """Upload an image to Contentful.
     #
