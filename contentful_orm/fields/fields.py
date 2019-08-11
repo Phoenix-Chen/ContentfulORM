@@ -27,28 +27,48 @@ class Field:
             field[attr] = val
         return field
 
+# NOTE: add class ArrayField
+
 class SymbolField(Field):
     type = 'Symbol'
+    def __init__(self, many: bool = False, disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = None):
+        if validations == None:
+            validations = list()
+
+        if many:
+            self.type = 'Array'
+            self.items = dict()
+            self.items['type'] = 'Symbol'
+            self.items['validations'] = validations
+
+        super().__init__(disabled=disabled, localized=localized, omitted=omitted, required=required, validations=None)
 
 class TextField(Field):
     type = 'Text'
 
+
+class RichTextField(Field):
+    type = 'RichText'
+
+
 class BooleanField(Field):
     type = 'Boolean'
+
 
 class MediaField(Field):
     type = 'Link'
     linkType = 'Asset'
 
+
 class IntegerField(Field):
     type = 'Integer'
+
 
 class DecimalField(Field):
     type = 'Number'
 
+
 class ReferenceField(Field):
-
-
     def __init__(self, model_set: set = {}, many: bool = False, error_msg: str = '', disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = None):
         # Damn you first-class object
         if validations == None:
@@ -76,3 +96,7 @@ class ReferenceField(Field):
                 validations.append(LinkContentType(link_content_types, error_msg=error_msg))
 
         super().__init__(disabled=disabled, localized=localized, omitted=omitted, required=required, validations=validations)
+
+
+class DateField(Field):
+    type = 'Date'
