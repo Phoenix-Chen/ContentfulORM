@@ -4,7 +4,7 @@ from ..utils import generate_id, _get_class_attr, _is_base_cls_type
 
 
 class Field:
-    def __init__(self, disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = None):
+    def __init__(self, disabled: bool = False, localized: bool = False, omitted: bool = False, required: bool = False, validations: list = None):
         self.name = None
         self.id = None
         self.disabled = disabled
@@ -27,21 +27,22 @@ class Field:
             field[attr] = val
         return field
 
-# NOTE: add class ArrayField
+    def _to_items(self):
+        """Help function to parse Field into items for ArrayField.
+        """
+        fields = self.serialize()
+        del fields['name']
+        del fields['id']
+        del fields['disabled']
+        del fields['localized']
+        del fields['omitted']
+        del fields['required']
+        return fields
+
 
 class SymbolField(Field):
     type = 'Symbol'
-    def __init__(self, many: bool = False, disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = None):
-        if validations == None:
-            validations = list()
 
-        if many:
-            self.type = 'Array'
-            self.items = dict()
-            self.items['type'] = 'Symbol'
-            self.items['validations'] = validations
-
-        super().__init__(disabled=disabled, localized=localized, omitted=omitted, required=required, validations=None)
 
 class TextField(Field):
     type = 'Text'
@@ -69,7 +70,7 @@ class DecimalField(Field):
 
 
 class ReferenceField(Field):
-    def __init__(self, model_set: set = {}, many: bool = False, error_msg: str = '', disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = None):
+    def __init__(self, model_set: set = {}, error_msg: str = '', disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = None):
         # Damn you first-class object
         if validations == None:
             validations = list()
@@ -81,22 +82,23 @@ class ReferenceField(Field):
                 raise TypeError('model_set can only contain models.Model based class. Detected: ' + str(model) + '.')
             link_content_types.append(generate_id(model.__name__))
 
-        if many:
-            self.type = 'Array'
-            self.items = dict()
-            self.items['type'] = 'Link'
-            self.items['linkType'] = 'Entry'
-            self.items['validations'] = list()
-            if len(model_set) > 0:
-                self.items['validations'].append(LinkContentType(link_content_types, error_msg=error_msg).serialize())
-        else:
-            self.type = 'Link'
-            self.linkType = 'Entry'
-            if len(model_set) > 0:
-                validations.append(LinkContentType(link_content_types, error_msg=error_msg))
+        self.type = 'Link'
+        self.linkType = 'Entry'
+        if len(link_content_types) > 0:
+            validations.append(LinkContentType(link_content_types, error_msg=error_msg))
 
         super().__init__(disabled=disabled, localized=localized, omitted=omitted, required=required, validations=validations)
 
 
 class DateField(Field):
     type = 'Date'
+
+
+class ArrayField(Field):
+    type = 'Array'
+    items = dict()
+
+    def __init__(self, items, disabled: bool = False, localized: bool = False, omitted: bool = False, required: bool = False, validations: list = None):
+        if type(items) not in [SymbolField, ReferenceField, MediaField]:
+            raise TypeError('ArrayField currently only accecpt SymbolField, ReferenceField and MediaField. Detected: ' + str(type(items)) + '.')
+        self.items = items._to_items()
