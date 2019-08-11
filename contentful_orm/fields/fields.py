@@ -70,7 +70,7 @@ class DecimalField(Field):
 
 
 class ReferenceField(Field):
-    def __init__(self, model_set: set = {}, error_msg: str = '', disabled: bool = False, localized: bool = True, omitted: bool = False, required: bool = True, validations: list = None):
+    def __init__(self, model_set: set = {}, error_msg: str = '', disabled: bool = False, localized: bool = False, omitted: bool = False, required: bool = False, validations: list = None):
         # Damn you first-class object
         if validations == None:
             validations = list()
