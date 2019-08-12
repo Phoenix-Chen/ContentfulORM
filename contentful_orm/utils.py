@@ -1,5 +1,7 @@
 import re
 import inspect
+import uuid
+from baseconv import base62
 
 def camel_case(s: str) -> str:
     """Generate id in camelCase based on input.
@@ -13,18 +15,14 @@ def camel_case(s: str) -> str:
     """
     if s == '' or s == None:
         raise ValueError('Input cannot be empty or None.')
-
     if not re.match('^[a-zA-Z0-9_ ]+$', s):
         raise ValueError('Input can only contain alphabets, numbers, space and underscore.')
-
     if not s[0].isalpha():
         raise ValueError('Input can only start with alphabet.')
-
     # Split by space and underscore
     s.replace(' ', '_')
     cs = ''.join([i.capitalize() for i in s.split('_')])
     return cs[0].lower() + cs[1:]
-
 
 def _get_class_attr(cls) -> list:
     """Get all non-callable class attributes.
@@ -47,7 +45,18 @@ def _is_base_cls_type(cls, target_base):
         raise TypeError('cls has to be a class, not ' + str(type(cls)) + '.')
     if type(target_base) != type:
         raise TypeError('target_base has to be a class, not ' + str(type(cls)) + '.')
-
     if inspect.getmro(cls)[-2] == target_base:
         return True
     return False
+
+def generate_id():
+    """Generate 128 bit UUID encoded in base 62
+
+        See: https://www.contentfulcommunity.com/t/support-for-standard-uuids/1635
+
+        Returns:
+            str : generated ID.
+    """
+    uuid_hex = str(uuid.uuid4()).replace('-','')
+    uuid_int = int(uuid_hex, 16)
+    return base62.encode(uuid_int)

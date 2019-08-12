@@ -17,7 +17,8 @@ setup(
     description='',
     long_description=long_description,
     install_requires=[
-        "contentful_management"
+        'contentful_management',
+        'python-baseconv'
     ],
     classifiers=[
         'Intended Audience :: Developers',
