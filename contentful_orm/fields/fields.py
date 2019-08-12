@@ -1,6 +1,6 @@
 from .. import models
 from .validations import LinkContentType
-from ..utils import generate_id, _get_class_attr, _is_base_cls_type
+from ..utils import camel_case, _get_class_attr, _is_base_cls_type
 
 
 class Field:
@@ -18,7 +18,7 @@ class Field:
         """Set the name and the id of the field.
         """
         self.name = name
-        self.id = generate_id(name)
+        self.id = camel_case(name)
 
     def serialize(self):
         field = {}
@@ -80,7 +80,7 @@ class ReferenceField(Field):
         for model in model_set:
             if not _is_base_cls_type(model, models.Model):
                 raise TypeError('model_set can only contain models.Model based class. Detected: ' + str(model) + '.')
-            link_content_types.append(generate_id(model.__name__))
+            link_content_types.append(camel_case(model.__name__))
 
         self.type = 'Link'
         self.linkType = 'Entry'
