@@ -45,6 +45,8 @@ class Model:
     def add(self, connector, id: str = None):
         if id == None:
             id = generate_id()
+        # NOTE: considering check id duplication
+        # Although generate_id is UUID and contentful_management should handle duplicate id problem
         return connector.entries().create(id, self.to_entry(connector))
 
     @classmethod
