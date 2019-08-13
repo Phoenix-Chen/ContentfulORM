@@ -3,7 +3,8 @@ from .fields import fields
 from functools import wraps
 from contentful_management.errors import NotFoundError
 from .errors import OperationalError
-from .utils import camel_case, _get_class_attr
+from .utils import camel_case, _get_class_attr, generate_id
+from .locales import get_default_code, make_localizer
 
 # class EntriesProxy:
 #     def __init__(self):
@@ -21,11 +22,29 @@ class Model:
     __display_field__ = None
 
     def __init__(self, **kwargs):
+        self.__entry__ = dict()
+        self.__entry__['content_type_id'] = camel_case(type(self).__name__)
+        self.__entry__['fields'] = dict()
         fields = _get_class_attr(self)
         for key in kwargs.keys():
             if key not in fields:
                 raise TypeError(str(type(self).__name__) + " got an unexpected keyword argument '" + key + "'")
+            self.__entry__['fields'][camel_case(key)] = kwargs[key]
 
+    def to_entry(self, connector):
+        default_localizer = make_localizer(get_default_code(connector))
+        # Check if each field is localized
+        for field_name in self.__entry__['fields'].keys():
+            # If not localized use default locale
+            if type(self.__entry__['fields'][field_name]) != type(default_localizer):
+                self.__entry__['fields'][field_name] = default_localizer(self.__entry__['fields'][field_name])
+            self.__entry__['fields'][field_name] = self.__entry__['fields'][field_name].localize()
+        return self.__entry__
+
+    def add(self, connector, id: str = None):
+        if id == None:
+            id = generate_id()
+        return connector.entries().create(id, self.to_entry(connector))
 
     @classmethod
     def create(cls, connector):
