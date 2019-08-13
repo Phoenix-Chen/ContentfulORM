@@ -36,7 +36,8 @@ class Model:
         # Check if each field is localized
         for field_name in self.__entry__['fields'].keys():
             # If not localized use default locale
-            if type(self.__entry__['fields'][field_name]) != type(default_localizer):
+            # Currently no cleaner soluiton other than string compare
+            if str(type(self.__entry__['fields'][field_name])) != str(default_localizer):
                 self.__entry__['fields'][field_name] = default_localizer(self.__entry__['fields'][field_name])
             self.__entry__['fields'][field_name] = self.__entry__['fields'][field_name].localize()
         return self.__entry__
