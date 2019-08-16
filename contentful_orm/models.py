@@ -17,7 +17,21 @@ class ORMContentTypeEntriesProxy(ContentTypeEntriesProxy):
         self.content_type_fields = content_type_fields
 
     def filter(self, **kwargs):
-        pass
+        fields_name_id = self.get_fields_name_id()
+        query = {}
+        for key in kwargs.keys():
+            if key not in fields_name_id.keys():
+                raise TypeError(str(self.proxy.content_type_id) + " does not contain field: '" + key + "'")
+            query['fields.' + fields_name_id[key] + '[all]'] = kwargs[key]
+        return self.all(query=query)
+
+    def get_fields_name_id(self):
+        """Return a dict of field name to field ID.
+        """
+        fields_name_id = dict()
+        for i in self.content_type_fields:
+            fields_name_id[i.name] = i._real_id()
+        return fields_name_id
 
 
 class Model:
