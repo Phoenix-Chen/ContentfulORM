@@ -2,20 +2,22 @@ import inspect
 from .fields import fields
 from functools import wraps
 from contentful_management.errors import NotFoundError
+from contentful_management.content_type_entries_proxy import ContentTypeEntriesProxy
 from .errors import OperationalError
 from .utils import camel_case, _get_class_attr, generate_id
 from .locales import get_default_code, make_localizer
 
-# class EntriesProxy:
-#     def __init__(self):
-#         pass
-#
-#     # def add_field(self, field_name, field_value):
-#     #     pass
-#
-#     def all(self):
-#         pass
+class ORMContentTypeEntriesProxy(ContentTypeEntriesProxy):
+    @classmethod
+    def from_parent(cls, parent, content_type_fields):
+        return cls(parent.proxy.client, parent.proxy.space_id, parent.proxy.environment_id, parent.proxy.content_type_id, content_type_fields)
 
+    def __init__(self, client, space_id, environment_id, content_type_id, content_type_fields):
+        super().__init__(client, space_id, environment_id, content_type_id)
+        self.content_type_fields = content_type_fields
+
+    def filter(self, **kwargs):
+        pass
 
 
 class Model:
@@ -66,7 +68,7 @@ class Model:
         if not cls.exist(connector):
             raise OperationalError('Content type ' + camel_case(cls.__name__) + ' does not exist.')
         content_type = cls.get_content_type(connector)
-        return content_type.entries()
+        return ORMContentTypeEntriesProxy.from_parent(content_type.entries(), content_type.fields)
 
     @classmethod
     def exist(cls, connector):
