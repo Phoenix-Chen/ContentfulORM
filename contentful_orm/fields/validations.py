@@ -1,3 +1,5 @@
+from ..utils import _validate_regex_flags
+
 class Validation:
     def __init__(self, error_msg: str = ''):
         self.message = error_msg
@@ -51,6 +53,27 @@ class LinkContentType(Validation):
     def __init__(self, link_content_types: list, error_msg: str = ''):
         self.linkContentType = link_content_types
         super().__init__(error_msg=error_msg)
+
+
+class Regex(Validation):
+    def __init__(self, pattern: str, flags: str = None, error_msg: str = ''):
+        self.regexp = dict()
+        self.regexp['pattern'] = pattern
+        if flags != None:
+            _validate_regex_flags(flags)
+            self.regexp['flags'] = flags
+        super().__init__(error_msg=error_msg)
+
+
+class ProhibitRegex(Validation):
+    def __init__(self, pattern: str, flags: str = None, error_msg: str = ''):
+        self.prohibitRegexp = dict()
+        self.prohibitRegexp['pattern'] = pattern
+        if flags != None:
+            _validate_regex_flags(flags)
+            self.prohibitRegexp['flags'] = flags
+        super().__init__(error_msg=error_msg)
+
 
 class Unique:
     @staticmethod
