@@ -102,3 +102,4 @@ class ArrayField(Field):
         if type(items) not in [SymbolField, ReferenceField, MediaField]:
             raise TypeError('ArrayField currently only accecpt SymbolField, ReferenceField and MediaField. Detected: ' + str(type(items)) + '.')
         self.items = items._to_items()
+        super().__init__(disabled=disabled, localized=localized, omitted=omitted, required=required, validations=validations)
