@@ -10,7 +10,7 @@ setup(
     version='0.0.1',
     author='Phoenix Chen',
     author_email='',
-    packages=['contentful_orm'],
+    packages=['contentful_orm', 'contentful_orm.fields'],
     scripts=[],
     # url='',
     # license='LICENSE.txt',

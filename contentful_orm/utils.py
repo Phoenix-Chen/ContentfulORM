@@ -60,3 +60,13 @@ def generate_id():
     uuid_hex = str(uuid.uuid4()).replace('-','')
     uuid_int = int(uuid_hex, 16)
     return base62.encode(uuid_int)
+
+def _validate_regex_flags(flags: str):
+    """Check if input flags are valid.
+    """
+    allowed_flags = {'g', 'i', 'm', 's', 'u', 'y'}
+    for char in flags:
+        if char in allowed_flags:
+            allowed_flags.remove(char)
+        else:
+            raise ValueError('Invalid flags. see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp for more details.')
