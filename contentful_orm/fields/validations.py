@@ -22,6 +22,7 @@ class Range(Validation):
             self.range['max'] = max
         if min != None:
             self.range['min'] = min
+        super().__init__(error_msg=error_msg)
 
 
 class Size(Validation):
@@ -33,6 +34,7 @@ class Size(Validation):
             self.size['max'] = max
         if min != None:
             self.size['min'] = min
+        super().__init__(error_msg=error_msg)
 
 
 class In(Validation):
@@ -77,6 +79,8 @@ class ProhibitRegex(Validation):
 
 class ImageDimensions(Validation):
     def __init__(self, max_width: int = None, min_width: int = None, max_height: int = None, min_height: int = None, error_msg: str = ''):
+        if max_width == None and min_width == None and max_height == None and min_height == None:
+            raise TypeError('ImageDimensions requires at least one of the arguments max_width, min_width, max_height or min_height.')
         self.assetImageDimensions = dict()
         self.assetImageDimensions['width'] = dict()
         self.assetImageDimensions['width']['max'] = max_width
@@ -85,6 +89,19 @@ class ImageDimensions(Validation):
         self.assetImageDimensions['height']['max'] = max_height
         self.assetImageDimensions['height']['min'] = min_height
         super().__init__(error_msg=error_msg)
+
+
+class FileSize(Validation):
+    def __init__(self, max: float = None, min: float = None, error_msg: str = ''):
+        if max == None and min == None:
+            raise TypeError('FileSize requires argument max or min or both.')
+        self.assetFileSize = dict()
+        if max != None:
+            self.assetFileSize['max'] = max
+        if min != None:
+            self.assetFileSize['min'] = min
+        super().__init__(error_msg=error_msg)
+
 
 class Unique:
     @staticmethod
