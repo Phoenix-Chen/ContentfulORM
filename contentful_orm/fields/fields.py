@@ -94,6 +94,10 @@ class DateField(Field):
     type = 'Date'
 
 
+class LocationField(Field):
+    type = 'Location'
+
+
 class ArrayField(Field):
     type = 'Array'
     items = dict()
