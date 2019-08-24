@@ -75,6 +75,17 @@ class ProhibitRegex(Validation):
         super().__init__(error_msg=error_msg)
 
 
+class ImageDimensions(Validation):
+    def __init__(self, max_width: int = None, min_width: int = None, max_height: int = None, min_height: int = None, error_msg: str = ''):
+        self.assetImageDimensions = dict()
+        self.assetImageDimensions['width'] = dict()
+        self.assetImageDimensions['width']['max'] = max_width
+        self.assetImageDimensions['width']['min'] = min_width
+        self.assetImageDimensions['height'] = dict()
+        self.assetImageDimensions['height']['max'] = max_height
+        self.assetImageDimensions['height']['min'] = min_height
+        super().__init__(error_msg=error_msg)
+
 class Unique:
     @staticmethod
     def serialize():
