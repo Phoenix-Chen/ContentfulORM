@@ -1,8 +1,8 @@
-def _get_all(connector):
-    return connector.locales().all()
+def _get_all(env):
+    return env.locales().all()
 
-def get_default_code(connector):
-    return _get_all(connector)[0].default_locale
+def get_default_code(env):
+    return _get_all(env)[0].default_locale
 
 def make_localizer(code):
     class Localizer:

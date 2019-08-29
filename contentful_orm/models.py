@@ -62,8 +62,8 @@ class Model:
                 raise TypeError(str(type(self).__name__) + " got an unexpected keyword argument '" + key + "'")
             self.__entry__['fields'][camel_case(key)] = kwargs[key]
 
-    def to_entry(self, connector):
-        default_localizer = make_localizer(get_default_code(connector))
+    def to_entry(self, env):
+        default_localizer = make_localizer(get_default_code(env))
         # Check if each field is localized
         for field_name in self.__entry__['fields'].keys():
             # If not localized use default locale
@@ -73,50 +73,50 @@ class Model:
             self.__entry__['fields'][field_name] = self.__entry__['fields'][field_name].localize()
         return self.__entry__
 
-    def add(self, connector, id: str = None):
+    def add(self, env, id: str = None):
         if id == None:
             id = generate_id()
         # NOTE: considering check id duplication
         # Although generate_id is UUID and contentful_management should handle duplicate id problem
         # NOTE: add rollback if add fails
-        return connector.entries().create(id, self.to_entry(connector))
+        return env.entries().create(id, self.to_entry(env))
 
     @classmethod
-    def create(cls, connector):
-        if cls.exist(connector):
+    def create(cls, env):
+        if cls.exist(env):
             raise OperationalError('Content type ' + camel_case(cls.__name__) + ' already exist. Use update() to update fields.')
-        return connector.content_types().create(camel_case(cls.__name__), cls.serialize())
+        return env.content_types().create(camel_case(cls.__name__), cls.serialize())
 
     @classmethod
-    def delete(cls, connector):
-        if not cls.exist(connector):
+    def delete(cls, env):
+        if not cls.exist(env):
             raise OperationalError('Content type ' + camel_case(cls.__name__) + ' does not exist.')
-        return connector.content_types().delete(camel_case(cls.__name__))
+        return env.content_types().delete(camel_case(cls.__name__))
 
     @classmethod
-    def query(cls, connector):
-        if not cls.exist(connector):
+    def query(cls, env):
+        if not cls.exist(env):
             raise OperationalError('Content type ' + camel_case(cls.__name__) + ' does not exist.')
-        content_type = cls.get_content_type(connector)
+        content_type = cls.get_content_type(env)
         return ORMContentTypeEntriesProxy.from_parent(content_type.entries(), content_type.fields)
 
     @classmethod
-    def exist(cls, connector):
+    def exist(cls, env):
         try:
-            connector.content_types().find(camel_case(cls.__name__))
+            env.content_types().find(camel_case(cls.__name__))
         except NotFoundError as nfe:
             return False
         return True
 
     @classmethod
-    def get_content_type(cls, connector):
-        return connector.content_types().find(camel_case(cls.__name__))
+    def get_content_type(cls, env):
+        return env.content_types().find(camel_case(cls.__name__))
 
     @classmethod
-    def publish(cls, connector):
-        if not cls.exist(connector):
+    def publish(cls, env):
+        if not cls.exist(env):
             raise OperationalError('Content type ' + camel_case(cls.__name__) + ' does not exist.')
-        content_type = cls.get_content_type(connector)
+        content_type = cls.get_content_type(env)
         return content_type.publish()
 
     @classmethod
@@ -149,8 +149,8 @@ class Model:
         return attributes
 
     @classmethod
-    def unpublish(cls, connector):
-        if not cls.exist(connector):
+    def unpublish(cls, env):
+        if not cls.exist(env):
             raise OperationalError('Content type ' + camel_case(cls.__name__) + ' does not exist.')
-        content_type = cls.get_content_type(connector)
+        content_type = cls.get_content_type(env)
         return content_type.unpublish()

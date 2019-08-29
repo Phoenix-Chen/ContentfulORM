@@ -1,4 +1,2 @@
-
-
 class OperationalError(Exception):
     pass

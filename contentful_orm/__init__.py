@@ -1,2 +1,2 @@
-from .contentful_connector import ContentfulManagementConnector
+from .orm_environment import ORMEnvironment
 from .fields import *
