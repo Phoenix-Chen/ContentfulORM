@@ -12,7 +12,7 @@ class Field:
         self.omitted = omitted
         self.required = required
         # Damn you first-class object
-        self.validations = [v.serialize() for v in validations] if validations != None else list()
+        self.validations = [v.serialize() for v in validations] if validations is not None else list()
 
     def set_name(self, name: str):
         """Set the name and the id of the field.
@@ -72,7 +72,7 @@ class DecimalField(Field):
 class ReferenceField(Field):
     def __init__(self, model_set: set = {}, error_msg: str = '', disabled: bool = False, localized: bool = False, omitted: bool = False, required: bool = False, validations: list = None):
         # Damn you first-class object
-        if validations == None:
+        if validations is None:
             validations = list()
 
         link_content_types = list()
