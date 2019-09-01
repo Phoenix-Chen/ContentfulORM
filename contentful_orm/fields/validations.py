@@ -1,7 +1,7 @@
 from ..utils import _validate_regex_flags
 
 class Validation:
-    def __init__(self, error_msg: str = ''):
+    def __init__(self, error_msg=''):
         self.message = error_msg
 
     def serialize(self):
@@ -14,33 +14,33 @@ class Validation:
 
 
 class Range(Validation):
-    def __init__(self, max: float = None, min: float = None, error_msg: str = ''):
-        if max == None and min == None:
+    def __init__(self, max=None, min=None, error_msg=''):
+        if max is None and min is None:
             raise TypeError('Range requires argument max or min or both.')
         self.range = dict()
-        if max != None:
+        if max is not None:
             self.range['max'] = max
-        if min != None:
+        if min is not None:
             self.range['min'] = min
         super().__init__(error_msg=error_msg)
 
 
 class Size(Validation):
-    def __init__(self, max: float = None, min: float = None, error_msg: str = ''):
-        if max == None and min == None:
+    def __init__(self, max=None, min=None, error_msg=''):
+        if max is None and min is None:
             raise TypeError('Size requires argument max or min or both.')
         self.size = dict()
-        if max != None:
+        if max is not None:
             self.size['max'] = max
-        if min != None:
+        if min is not None:
             self.size['min'] = min
         super().__init__(error_msg=error_msg)
 
 
 class In(Validation):
-    def __init__(self, values: list, error_msg: str = ''):
+    def __init__(self, values, error_msg=''):
         self.__in__ = list()
-        if values != None:
+        if values is not None:
             self.__in__ = values
         super().__init__(error_msg=error_msg)
 
@@ -52,34 +52,34 @@ class In(Validation):
 
 
 class LinkContentType(Validation):
-    def __init__(self, link_content_types: list, error_msg: str = ''):
+    def __init__(self, link_content_types, error_msg=''):
         self.linkContentType = link_content_types
         super().__init__(error_msg=error_msg)
 
 
 class Regex(Validation):
-    def __init__(self, pattern: str, flags: str = None, error_msg: str = ''):
+    def __init__(self, pattern, flags=None, error_msg=''):
         self.regexp = dict()
         self.regexp['pattern'] = pattern
-        if flags != None:
+        if flags is not None:
             _validate_regex_flags(flags)
             self.regexp['flags'] = flags
         super().__init__(error_msg=error_msg)
 
 
 class ProhibitRegex(Validation):
-    def __init__(self, pattern: str, flags: str = None, error_msg: str = ''):
+    def __init__(self, pattern, flags=None, error_msg=''):
         self.prohibitRegexp = dict()
         self.prohibitRegexp['pattern'] = pattern
-        if flags != None:
+        if flags is not None:
             _validate_regex_flags(flags)
             self.prohibitRegexp['flags'] = flags
         super().__init__(error_msg=error_msg)
 
 
 class ImageDimensions(Validation):
-    def __init__(self, max_width: int = None, min_width: int = None, max_height: int = None, min_height: int = None, error_msg: str = ''):
-        if max_width == None and min_width == None and max_height == None and min_height == None:
+    def __init__(self, max_width=None, min_width=None, max_height=None, min_height=None, error_msg=''):
+        if max_width is None and min_width is None and max_height is None and min_height is None:
             raise TypeError('ImageDimensions requires at least one of the arguments max_width, min_width, max_height or min_height.')
         self.assetImageDimensions = dict()
         self.assetImageDimensions['width'] = dict()
@@ -92,13 +92,13 @@ class ImageDimensions(Validation):
 
 
 class FileSize(Validation):
-    def __init__(self, max: float = None, min: float = None, error_msg: str = ''):
-        if max == None and min == None:
+    def __init__(self, max=None, min=None, error_msg=''):
+        if max is None and min is None:
             raise TypeError('FileSize requires argument max or min or both.')
         self.assetFileSize = dict()
-        if max != None:
+        if max is not None:
             self.assetFileSize['max'] = max
-        if min != None:
+        if min is not None:
             self.assetFileSize['min'] = min
         super().__init__(error_msg=error_msg)
 

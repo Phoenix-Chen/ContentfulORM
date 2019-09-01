@@ -3,7 +3,7 @@ import inspect
 import uuid
 from baseconv import base62
 
-def camel_case(s: str) -> str:
+def camel_case(s):
     """Generate id in camelCase based on input.
 
         Args:
