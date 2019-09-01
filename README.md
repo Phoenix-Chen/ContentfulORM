@@ -17,7 +17,7 @@ The Python toolkit for [Contentful](https://www.contentful.com/) to let you writ
 - Create an ORM Environment:
     ```python
     import contentful_management
-    from contentful_orm.orm_environment import ORMEnvironment
+    from contentful_orm import ORMEnvironment
 
     # First create an contentful_management.environment.Environment
     client = contentful_management.Client('CONTENTFUL_MANAGEMENT_TOKEN')

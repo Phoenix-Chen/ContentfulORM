@@ -12,8 +12,6 @@ setup(
     author_email='',
     packages=['contentful_orm', 'contentful_orm.fields'],
     scripts=[],
-    # url='',
-    # license='LICENSE.txt',
     description='',
     long_description=long_description,
     install_requires=[
@@ -22,7 +20,6 @@ setup(
     ],
     classifiers=[
         'Intended Audience :: Developers',
-        # 'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3'
     ]
