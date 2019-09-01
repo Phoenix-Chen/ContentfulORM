@@ -4,7 +4,7 @@ from ..utils import camel_case, _get_class_attr, _is_base_cls_type
 
 
 class Field:
-    def __init__(self, disabled: bool = False, localized: bool = False, omitted: bool = False, required: bool = False, validations: list = None):
+    def __init__(self, disabled=False, localized=False, omitted=False, required=False, validations=None):
         self.name = None
         self.id = None
         self.disabled = disabled
@@ -14,7 +14,7 @@ class Field:
         # Damn you first-class object
         self.validations = [v.serialize() for v in validations] if validations is not None else list()
 
-    def set_name(self, name: str):
+    def set_name(self, name):
         """Set the name and the id of the field.
         """
         self.name = name
@@ -70,7 +70,7 @@ class DecimalField(Field):
 
 
 class ReferenceField(Field):
-    def __init__(self, model_set: set = {}, error_msg: str = '', disabled: bool = False, localized: bool = False, omitted: bool = False, required: bool = False, validations: list = None):
+    def __init__(self, model_set={}, error_msg='', disabled=False, localized=False, omitted=False, required=False, validations=None):
         # Damn you first-class object
         if validations is None:
             validations = list()
@@ -102,7 +102,7 @@ class ArrayField(Field):
     type = 'Array'
     items = dict()
 
-    def __init__(self, items, disabled: bool = False, localized: bool = False, omitted: bool = False, required: bool = False, validations: list = None):
+    def __init__(self, items, disabled=False, localized=False, omitted=False, required=False, validations=None):
         if type(items) not in [SymbolField, ReferenceField, MediaField]:
             raise TypeError('ArrayField currently only accecpt SymbolField, ReferenceField and MediaField. Detected: ' + str(type(items)) + '.')
         self.items = items._to_items()

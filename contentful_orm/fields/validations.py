@@ -1,7 +1,7 @@
 from ..utils import _validate_regex_flags
 
 class Validation:
-    def __init__(self, error_msg: str = ''):
+    def __init__(self, error_msg=''):
         self.message = error_msg
 
     def serialize(self):
@@ -14,7 +14,7 @@ class Validation:
 
 
 class Range(Validation):
-    def __init__(self, max: float = None, min: float = None, error_msg: str = ''):
+    def __init__(self, max=None, min=None, error_msg=''):
         if max is None and min is None:
             raise TypeError('Range requires argument max or min or both.')
         self.range = dict()
@@ -26,7 +26,7 @@ class Range(Validation):
 
 
 class Size(Validation):
-    def __init__(self, max: float = None, min: float = None, error_msg: str = ''):
+    def __init__(self, max=None, min=None, error_msg=''):
         if max is None and min is None:
             raise TypeError('Size requires argument max or min or both.')
         self.size = dict()
@@ -38,7 +38,7 @@ class Size(Validation):
 
 
 class In(Validation):
-    def __init__(self, values: list, error_msg: str = ''):
+    def __init__(self, values, error_msg=''):
         self.__in__ = list()
         if values is not None:
             self.__in__ = values
@@ -52,13 +52,13 @@ class In(Validation):
 
 
 class LinkContentType(Validation):
-    def __init__(self, link_content_types: list, error_msg: str = ''):
+    def __init__(self, link_content_types, error_msg=''):
         self.linkContentType = link_content_types
         super().__init__(error_msg=error_msg)
 
 
 class Regex(Validation):
-    def __init__(self, pattern: str, flags: str = None, error_msg: str = ''):
+    def __init__(self, pattern, flags=None, error_msg=''):
         self.regexp = dict()
         self.regexp['pattern'] = pattern
         if flags is not None:
@@ -68,7 +68,7 @@ class Regex(Validation):
 
 
 class ProhibitRegex(Validation):
-    def __init__(self, pattern: str, flags: str = None, error_msg: str = ''):
+    def __init__(self, pattern, flags=None, error_msg=''):
         self.prohibitRegexp = dict()
         self.prohibitRegexp['pattern'] = pattern
         if flags is not None:
@@ -78,7 +78,7 @@ class ProhibitRegex(Validation):
 
 
 class ImageDimensions(Validation):
-    def __init__(self, max_width: int = None, min_width: int = None, max_height: int = None, min_height: int = None, error_msg: str = ''):
+    def __init__(self, max_width=None, min_width=None, max_height=None, min_height=None, error_msg=''):
         if max_width is None and min_width is None and max_height is None and min_height is None:
             raise TypeError('ImageDimensions requires at least one of the arguments max_width, min_width, max_height or min_height.')
         self.assetImageDimensions = dict()
@@ -92,7 +92,7 @@ class ImageDimensions(Validation):
 
 
 class FileSize(Validation):
-    def __init__(self, max: float = None, min: float = None, error_msg: str = ''):
+    def __init__(self, max=None, min=None, error_msg=''):
         if max is None and min is None:
             raise TypeError('FileSize requires argument max or min or both.')
         self.assetFileSize = dict()
