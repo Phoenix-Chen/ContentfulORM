@@ -15,10 +15,17 @@ class Model:
         self.__entry__['content_type_id'] = camel_case(type(self).__name__)
         self.__entry__['fields'] = dict()
         fields = _get_class_attr(self)
+        # Add values set by user
         for key in kwargs.keys():
             if key not in fields:
                 raise TypeError(str(type(self).__name__) + " got an unexpected keyword argument '" + key + "'")
             self.__entry__['fields'][camel_case(key)] = kwargs[key]
+        # Add values not set by user but has default
+        for field in fields:
+            defaul_val = getattr(self, field).__default_val__
+            if defaul_val is not None and camel_case(field) not in self.__entry__['fields']:
+                self.__entry__['fields'][camel_case(field)] = defaul_val
+
 
     def to_entry(self, env):
         default_localizer = make_localizer(get_default_code(env))
