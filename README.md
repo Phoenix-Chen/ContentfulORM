@@ -1,6 +1,6 @@
 # ContentfulORM
 ***
-The Python toolkit for [Contentful](https://www.contentful.com/) to let you write your Content Type and queries in ORM style.
+A Python toolkit for [Contentful](https://www.contentful.com/) to let you create/maintain your Content Type and queries in ORM style.
 
 ## Install
 ***
@@ -32,6 +32,7 @@ The Python toolkit for [Contentful](https://www.contentful.com/) to let you writ
 ***
 - Model your content type:
     ```python
+    from datetime import datetime
     from contentful_orm.models import Model
     from contentful_orm.fields import ArrayField, BooleanField, DateField, DecimalField, IntegerField, MediaField, ReferenceField, SymbolField, TextField, LocationField
     from contentful_orm.fields.validations import In, Range, Unique, Size, Regex, ImageDimensions, FileSize
@@ -45,14 +46,14 @@ The Python toolkit for [Contentful](https://www.contentful.com/) to let you writ
         __display_field__ = 'name'
 
         # Each field need to be a {SomeType}Field from contentful_orm.fields
-        # Most of the fields have keyword argument: disabled, localized, omitted, required and validations
-        # (disabled, localized, omitted and required default to False. validations defaults to [])
+        # Most of the fields have keyword argument: disabled, localized, omitted, required, validations and default
+        # (disabled, localized, omitted and required default to False. validations defaults to []. default defaults to None)
         email = SymbolField(validations=[Unique, Regex('^\\w[\\w.-]*@([\\w-]+\\.)+[\\w-]+$', error_msg='Invalid email address.')], required=True)
         name = SymbolField(localized=True, required=True)
         # ArrayField takes an argument to specify content type
         title = ArrayField(SymbolField(validations=[In(['Manager', 'Seller'], error_msg='Invalid title')]), localized=True)
         age = IntegerField(validations=[Range(min=1, error_msg='age must be a positive integer.')])
-        created_date = DateField()
+        created_date = DateField(default=datetime.now().strftime("%Y-%m-%dT%H:%M-00:00"))
 
     class Company(Model):
         """Company model description

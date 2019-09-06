@@ -1,57 +1,10 @@
 import inspect
-import re
 from .fields import fields
-from functools import wraps
 from contentful_management.errors import NotFoundError
-from contentful_management.content_type_entries_proxy import ContentTypeEntriesProxy
 from .errors import OperationalError
 from .utils import camel_case, _get_class_attr, generate_id
 from .locales import get_default_code, make_localizer
-from .operators import field_query_factory
-
-class ORMContentTypeEntriesProxy(ContentTypeEntriesProxy):
-    @classmethod
-    def from_parent(cls, parent, content_type_fields):
-        return cls(parent.proxy.client, parent.proxy.space_id, parent.proxy.environment_id, parent.proxy.content_type_id, content_type_fields)
-
-    def __init__(self, client, space_id, environment_id, content_type_id, content_type_fields):
-        super().__init__(client, space_id, environment_id, content_type_id)
-        self.content_type_fields = content_type_fields
-
-    def _get_field_name(self, param):
-        """Return field name from query parameter by split '.' and '['
-        """
-        return re.split('\.|\[', param)[1]
-
-    # Currently doesn't support relational queries
-    def _make_queries(self, fields, kw_dict):
-        queries = dict()
-        for key, val in kw_dict.items():
-            # Check if the query param is field query
-            if key[:7] == 'fields.':
-                field_name = self._get_field_name(key)
-                if field_name not in fields.keys():
-                    raise TypeError(str(self.proxy.content_type_id) + " does not contain field: '" + key + "'")
-                queries['fields.' + fields[field_name] + key[7 + len(field_name):]] = val
-            else:
-                queries[key] = val
-        return queries
-
-    def filter(self, *args, **kwargs):
-        fields_name_id = self.get_fields_name_id()
-        queries = dict()
-        for arg in args:
-            queries.update(self._make_queries(fields_name_id, arg))
-        queries.update(self._make_queries(fields_name_id, field_query_factory(**kwargs)))
-        return self.all(query=queries)
-
-    def get_fields_name_id(self):
-        """Return a dict of field name to field ID.
-        """
-        fields_name_id = dict()
-        for i in self.content_type_fields:
-            fields_name_id[i.name] = i._real_id()
-        return fields_name_id
+from .orm_content_type_entries_proxy import ORMContentTypeEntriesProxy
 
 
 class Model:
@@ -62,10 +15,17 @@ class Model:
         self.__entry__['content_type_id'] = camel_case(type(self).__name__)
         self.__entry__['fields'] = dict()
         fields = _get_class_attr(self)
+        # Add values set by user
         for key in kwargs.keys():
             if key not in fields:
                 raise TypeError(str(type(self).__name__) + " got an unexpected keyword argument '" + key + "'")
             self.__entry__['fields'][camel_case(key)] = kwargs[key]
+        # Add values not set by user but has default
+        for field in fields:
+            defaul_val = getattr(self, field).__default_val__
+            if defaul_val is not None and camel_case(field) not in self.__entry__['fields']:
+                self.__entry__['fields'][camel_case(field)] = defaul_val
+
 
     def to_entry(self, env):
         default_localizer = make_localizer(get_default_code(env))
