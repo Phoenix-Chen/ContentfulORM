@@ -6,7 +6,7 @@ A Python toolkit for [Contentful](https://www.contentful.com/) to let you create
 ***
 - To install:
     ```
-    pip install git+https://github.com/Phoenix-Chen/ContentfulORM.git
+    pip install contentful-orm
     ```
 
 ## Usage
