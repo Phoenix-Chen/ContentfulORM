@@ -135,3 +135,28 @@ A Python toolkit for [Contentful](https://www.contentful.com/) to let you create
     orm_env.query(Person).filter(limit(1), name='c')
 
     ```
+- Serialize:
+    ```python
+    from contentful_orm.serializers import ModelSerializer
+
+    class ProductSerializer(ModelSerializer):
+        class Meta:
+            model = Product
+            # Specify fields to be serialized or use '__all__' for all the fields
+            fields = [
+                'name',
+                'description',
+                'price'
+            ]
+
+    # Query the entry/entries you want to serialize
+    products = orm_env.query(Product).all()
+
+    # Serialize single entry
+    serialized_product = ProductSerializer(products[0])
+
+    # Serialize multiple entries
+    serialized_products = ProductSerializer(products, many=True)
+
+    # Currently links won't be recursively serialized, in case of circular references.
+    ```
