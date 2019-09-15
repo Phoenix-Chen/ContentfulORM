@@ -153,10 +153,10 @@ A Python toolkit for [Contentful](https://www.contentful.com/) to let you create
     products = orm_env.query(Product).all()
 
     # Serialize single entry
-    serialized_product = ProductSerializer(products[0])
+    serialized_product = ProductSerializer(products[0]).serialize()
 
     # Serialize multiple entries
-    serialized_products = ProductSerializer(products, many=True)
+    serialized_products = ProductSerializer(products, many=True).serialize()
 
     # Currently links won't be recursively serialized, in case of circular references.
     ```
