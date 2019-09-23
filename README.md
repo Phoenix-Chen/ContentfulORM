@@ -94,6 +94,13 @@ A Python toolkit for [Contentful](https://www.contentful.com/) to let you create
     orm_env.create(Person)
     orm_env.publish(Person)
     ```
+- Update and publish the content type using model:
+    ```python
+    orm_env.update(Person).publish()
+    # Or
+    orm_env.update(Person)
+    orm_env.publish(Person)
+    ```
 - Unpublish and delete the content type using model:
     ```python
     orm_env.unpublish(Product)
