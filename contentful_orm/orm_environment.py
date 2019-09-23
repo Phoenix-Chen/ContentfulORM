@@ -14,6 +14,9 @@ class ORMEnvironment(Environment):
     def delete(self, obj):
         return obj.delete(self)
 
+    def update(self, obj):
+        return obj.update(self)
+
     def publish(self, obj):
         return obj.publish(self)
 

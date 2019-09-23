@@ -59,6 +59,13 @@ class Model:
         return env.content_types().delete(camel_case(cls.__name__))
 
     @classmethod
+    def update(cls, env):
+        if not cls.exist(env):
+            raise OperationalError('Content type ' + camel_case(cls.__name__) + ' does not exist.')
+        content_type = cls.get_content_type(env)
+        return content_type.update(cls.serialize())
+
+    @classmethod
     def query(cls, env):
         if not cls.exist(env):
             raise OperationalError('Content type ' + camel_case(cls.__name__) + ' does not exist.')
