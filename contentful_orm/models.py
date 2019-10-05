@@ -38,7 +38,7 @@ class Model:
             self.__entry__['fields'][field_name] = self.__entry__['fields'][field_name].localize()
         return self.__entry__
 
-    def add(self, env, id: str = None):
+    def add(self, env, id = None):
         if id is None:
             id = generate_id()
         # NOTE: considering check id duplication
@@ -57,6 +57,17 @@ class Model:
         if not cls.exist(env):
             raise OperationalError('Content type ' + camel_case(cls.__name__) + ' does not exist.')
         return env.content_types().delete(camel_case(cls.__name__))
+
+    @classmethod
+    def clear(cls, env):
+        if not cls.exist(env):
+            raise OperationalError('Content type ' + camel_case(cls.__name__) + ' does not exist.')
+        content_type = cls.get_content_type(env)
+        entries_for_content_type = content_type.entries().all()
+        for entry in entries_for_content_type:
+            if entry.is_published:
+                entry.unpublish()
+            entry.delete()
 
     @classmethod
     def update(cls, env):

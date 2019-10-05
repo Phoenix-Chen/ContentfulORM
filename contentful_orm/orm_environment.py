@@ -17,6 +17,9 @@ class ORMEnvironment(Environment):
     def update(self, obj):
         return obj.update(self)
 
+    def clear(self, obj):
+        return obj.clear(self)
+
     def publish(self, obj):
         return obj.publish(self)
 
@@ -26,5 +29,5 @@ class ORMEnvironment(Environment):
     def query(self, model):
         return model.query(self)
 
-    def add(self, obj, id: str = None):
+    def add(self, obj, id = None):
         return obj.add(self, id=id)

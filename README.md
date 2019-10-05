@@ -106,6 +106,10 @@ A Python toolkit for [Contentful](https://www.contentful.com/) to let you create
     orm_env.unpublish(Product)
     orm_env.delete(Product)
     ```
+- Unpublish and delete all entries of the content type using model:
+    ```python
+    orm_env.clear(Product)
+    ```
 - Add and publish entry:
     ```python
     person1 = orm_env.add(Person(email='a@a.com', name='a', title=['Manager', 'Seller'], age=13)).publish()
